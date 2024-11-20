@@ -2,8 +2,6 @@ from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')  # Establece el backend a 'Agg' (sin GUI)
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from sklearn.tree import DecisionTreeClassifier, plot_tree
@@ -85,6 +83,34 @@ def decision_tree():
     plt.close()
     
     return jsonify({'message': 'Árbol de decisión exportado!'})
+
+@app.route('/dataset', methods=['GET'])
+def dataset():
+    # Visualización del dataset
+    dataset_head = data.head().to_html(classes='table table-striped')
+    dataset_info = data.info(buf=None)  # Captura el info en una variable
+    dataset_info_html = f"<pre>{dataset_info}</pre>"  # Convierte a HTML
+    value_counts = data["calss"].value_counts().to_frame().to_html(classes='table table-striped')
+
+    return jsonify({
+        'head': dataset_head,
+        'info': dataset_info_html,
+        'value_counts': value_counts
+    })
+
+@app.route('/scaled_values', methods=['GET'])
+def scaled_values():
+    X_train_scaled_df = pd.DataFrame(X_train_reduced_scaled, columns=X_train.columns)
+    scaled_head = X_train_scaled_df.head(10).to_html(classes='table table-striped')
+    return jsonify({'scaled_head': scaled_head})
+
+@app.route('/f1_score', methods=['GET'])
+def f1_score():
+    from sklearn.metrics import f1_score
+    y_train_pred = clf_tree_reduced.predict(X_train_reduced_scaled)
+    f1 = f1_score(y_train_encoded, y_train_pred, average='weighted')
+    return jsonify({'f1_score': f1})
+
 
 # Ejecuta la aplicación Flask
 if __name__ == '__main__':
