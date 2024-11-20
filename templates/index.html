@@ -5,38 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualización de Decisión</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Estilos generales para la página */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* Estilo para el contenedor del iframe */
+        #iframe-container {
+            display: none;
+            width: 100vw; /* 100% del ancho de la ventana */
+            height: 100vh; /* 100% de la altura de la ventana */
+            border: none;
+            margin: 0;
+        }
+
+        /* Estilo para el iframe */
+        #random-forest-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Estilo para el botón */
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10; /* Asegura que el botón esté por encima del iframe */
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1 class="title">Random Forest (Limite de decision y arbol de decision)</h1>
-    </header>
+
+    <h1 class="title">Visualización de Límite de Decisión y Árbol de Decisión</h1>
     
-    <main>
-        <div class="button-container">
-            <button id="showBtn" class="button">Mostrar Gráficos</button>
-        </div>
+    <div class="button-container">
+        <button id="decisionBoundaryBtn" class="button">
+            Mostrar Límite de Decisión
+        </button>
+        <button id="decisionTreeBtn" class="button">
+            Mostrar Árbol de Decisión
+        </button>
+    </div>
 
-        <div id="loading" class="loading hidden">Cargando...</div>
-        
-        <div id="result" class="result">
-            <img id="decisionBoundaryImg" src="" alt="Límite de Decisión" class="hidden">
-            <img id="decisionTreeImg" src="" alt="Árbol de Decisión" class="hidden">
-        </div>
-    </main>
+    <div id="loading" class="hidden">Cargando...</div> <!-- Indicador de carga -->
+    
+    <div id="result" class="result">
+        <img id="decisionBoundaryImg" src="" alt="Límite de Decisión" class="hidden">
+        <img id="decisionTreeImg" src="" alt="Árbol de Decisión" class="hidden">
+    </div>
 
-    <footer>
-        <p class="footer-text">Desarrollado por tu Kevin</p>
-    </footer>
+    <div class="button-container">
+        <!-- Botones nuevos -->
+        <button id="datasetBtn" class="button">Visualizar Dataset</button>
+        <button id="scaledValuesBtn" class="button">Valores Escalados</button>
+        <button id="f1ScoreBtn" class="button">F1 Score</button>
+    </div>
+    
+    <div id="dataset" class="hidden"></div>
+    <div id="scaledValues" class="hidden"></div>
+    <div id="f1Score" class="hidden"></div>
+
+   <!-- Botón para mostrar el iframe -->
+   <button class="btn" onclick="mostrarIframe()">Ver Aplicación</button>
+
+   <!-- Contenedor del iframe, inicialmente oculto -->
+   <div id="iframe-container">
+       <iframe id="random-forest-iframe" src="" title="Random Forest App"></iframe>
+   </div>
 
     <script>
-        document.getElementById('showBtn').onclick = function() {
+        document.getElementById('decisionBoundaryBtn').onclick = function() {
+            // Mostrar el mensaje de carga
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('decisionBoundaryImg').style.display = 'none';
+            // Ocultar ambas imágenes
             document.getElementById('decisionTreeImg').style.display = 'none';
+            document.getElementById('decisionBoundaryImg').style.display = 'none';
 
-            // Hacer las dos solicitudes para mostrar los gráficos
             fetch('/decision_boundary')
                 .then(response => {
+                    document.getElementById('loading').style.display = 'none'; // Ocultar mensaje de carga
                     if (response.ok) {
                         const timestamp = new Date().getTime();
                         document.getElementById('decisionBoundaryImg').src = `static/decision_boundary.png?${timestamp}`;
@@ -47,14 +107,23 @@
                 })
                 .catch(error => {
                     console.error('Error al hacer la solicitud:', error);
+                    document.getElementById('loading').style.display = 'none';
                     alert('Error al obtener el límite de decisión');
                 });
+        };
+
+        document.getElementById('decisionTreeBtn').onclick = function() {
+            document.getElementById('loading').style.display = 'block';
+            // Ocultar ambas imágenes
+            document.getElementById('decisionBoundaryImg').style.display = 'none';
+            document.getElementById('decisionTreeImg').style.display = 'none';
 
             fetch('/decision_tree')
                 .then(response => {
+                    document.getElementById('loading').style.display = 'none';
                     if (response.ok) {
                         const timestamp = new Date().getTime();
-                        document.getElementById('decisionTreeImg').src = `static/decision_tree.png?${timestamp}`;
+                        document.getElementById('decisionTreeImg').src = `static/android_malware.png?${timestamp}`;
                         document.getElementById('decisionTreeImg').style.display = 'block';
                     } else {
                         alert('Error al obtener el árbol de decisión');
@@ -62,11 +131,69 @@
                 })
                 .catch(error => {
                     console.error('Error al hacer la solicitud:', error);
+                    document.getElementById('loading').style.display = 'none';
                     alert('Error al obtener el árbol de decisión');
                 });
-
-            document.getElementById('loading').style.display = 'none';
         };
+
+        // Función para mostrar el dataset
+    document.getElementById('datasetBtn').onclick = function() {
+        fetch('/dataset')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('dataset').innerHTML = `
+                    <h2>Head del Dataset</h2>
+                    ${data.head}
+                    <h2>Info del Dataset</h2>
+                    ${data.info}
+                    <h2>Value Counts</h2>
+                    ${data.value_counts}
+                `;
+                document.getElementById('dataset').style.display = 'block';
+            })
+            .catch(error => console.error('Error al obtener dataset:', error));
+    };
+
+    // Función para mostrar valores escalados
+    document.getElementById('scaledValuesBtn').onclick = function() {
+        fetch('/scaled_values')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('scaledValues').innerHTML = `
+                    <h2>Valores Escalados (Primeras 10 Filas)</h2>
+                    ${data.scaled_head}
+                `;
+                document.getElementById('scaledValues').style.display = 'block';
+            })
+            .catch(error => console.error('Error al obtener valores escalados:', error));
+    };
+
+    // Función para mostrar el F1 Score
+    document.getElementById('f1ScoreBtn').onclick = function() {
+        fetch('/f1_score')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('f1Score').innerHTML = `
+                    <h2>F1 Score</h2>
+                    <p>${data.f1_score}</p>
+                `;
+                document.getElementById('f1Score').style.display = 'block';
+            })
+            .catch(error => console.error('Error al obtener F1 Score:', error));
+    };
+
+          // Función para mostrar el iframe con el enlace al hacer clic en el botón
+          function mostrarIframe() {
+            var iframeContainer = document.getElementById("iframe-container");
+            var iframe = document.getElementById("random-forest-iframe");
+
+            // Establecer la URL del iframe
+            iframe.src = "https://aeb1-189-232-79-75.ngrok-free.app";
+            
+            // Mostrar el iframe
+            iframeContainer.style.display = "block";
+        }
     </script>
 </body>
+
 </html>
