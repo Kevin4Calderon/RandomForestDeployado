@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Decisión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1 class="title">Random Forest (Limite de decision y arbol de decision)</h1>
+    </header>
+    
+    <main>
+        <div class="button-container">
+            <button id="showBtn" class="button">Mostrar Gráficos</button>
+        </div>
+
+        <div id="loading" class="loading hidden">Cargando...</div>
+        
+        <div id="result" class="result">
+            <img id="decisionBoundaryImg" src="" alt="Límite de Decisión" class="hidden">
+            <img id="decisionTreeImg" src="" alt="Árbol de Decisión" class="hidden">
+        </div>
+    </main>
+
+    <footer>
+        <p class="footer-text">Desarrollado por tu Kevin</p>
+    </footer>
+
+    <script>
+        document.getElementById('showBtn').onclick = function() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('decisionBoundaryImg').style.display = 'none';
+            document.getElementById('decisionTreeImg').style.display = 'none';
+
+            // Hacer las dos solicitudes para mostrar los gráficos
+            fetch('/decision_boundary')
+                .then(response => {
+                    if (response.ok) {
+                        const timestamp = new Date().getTime();
+                        document.getElementById('decisionBoundaryImg').src = `static/decision_boundary.png?${timestamp}`;
+                        document.getElementById('decisionBoundaryImg').style.display = 'block';
+                    } else {
+                        alert('Error al obtener el límite de decisión');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al hacer la solicitud:', error);
+                    alert('Error al obtener el límite de decisión');
+                });
+
+            fetch('/decision_tree')
+                .then(response => {
+                    if (response.ok) {
+                        const timestamp = new Date().getTime();
+                        document.getElementById('decisionTreeImg').src = `static/decision_tree.png?${timestamp}`;
+                        document.getElementById('decisionTreeImg').style.display = 'block';
+                    } else {
+                        alert('Error al obtener el árbol de decisión');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al hacer la solicitud:', error);
+                    alert('Error al obtener el árbol de decisión');
+                });
+
+            document.getElementById('loading').style.display = 'none';
+        };
+    </script>
+</body>
+</html>
