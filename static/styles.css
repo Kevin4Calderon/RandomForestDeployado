@@ -1,87 +1,67 @@
-/* Reseteo de márgenes y padding para asegurar una base limpia */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #6e7fdb, #a67cc0); /* Fondo degradado */
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-}
-
-header {
-    margin-bottom: 2rem;
+    display: flex; /* Usamos flexbox para centrar todo */
+    flex-direction: column; /* Dirección en columna */
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+    min-height: 100vh; /* Ocupa toda la altura de la ventana */
+    margin: 0; /* Eliminar márgenes por defecto */
+    background-color: #1a1a1a; /* Fondo oscuro */
+    color: #f4f4f4; /* Color del texto en claro para contraste */
+    font-family: Arial, sans-serif; /* Fuente */
 }
 
 .title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-    letter-spacing: 2px;
-    margin-bottom: 1.5rem;
+    color: #a67cc0; /* Color morado brillante para el título */
+    font-size: 2.5rem; /* Tamaño de fuente más grande */
+    margin-bottom: 1.5rem; /* Espaciado inferior */
+    text-align: center; /* Centra el texto del título */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    text-transform: uppercase; /* Convierte el texto a mayúsculas */
+    transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves para el color, transformación y sombra */
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.3); /* Sombra blanca suave */
 }
 
-button {
-    background-color: #6a3f9a;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 1.1rem;
-    padding: 15px 30px;
-    margin: 0 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #9c6bc6;
-    transform: translateY(-3px); /* Efecto de desplazamiento */
-}
-
-button:active {
-    background-color: #5a3a74;
-    transform: translateY(2px); /* Efecto al presionar */
+.title:hover {
+    color: #d3a8e3; /* Color morado más brillante al pasar el cursor */
+    transform: scale(1.1); /* Aumenta el tamaño del título al pasar el cursor */
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5), 0 0 25px #d3a8e3; /* Sombra más pronunciada y brillante al hacer hover */
 }
 
 .button-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
+    display: flex; /* Para alinear botones horizontalmente */
+    justify-content: center; /* Centra los botones */
+    margin-bottom: 1.5rem; /* Espaciado inferior */
+}
+
+.button {
+    padding: 10px 15px;
+    margin: 0 5px; /* Espaciado horizontal entre botones */
+    background-color: #6a3f9a; /* Color morado oscuro para el botón */
+    color: white; /* Color del texto del botón */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-size: 1rem; /* Tamaño de fuente del botón */
+}
+
+.button:hover {
+    background-color: #b67fdb; /* Color al pasar el mouse (más claro) */
+}
+
+.hidden {
+    display: none; /* Oculta elementos */
 }
 
 .loading {
-    font-size: 1.2rem;
-    color: #f4f4f4;
-    margin-top: 1rem;
-    display: none;
+    font-size: 18px;
+    color: #999; /* Color gris claro para el texto de carga */
+    text-align: center; /* Centra el texto de carga */
 }
 
 .result {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 2rem;
-}
-
-footer {
-    position: absolute;
-    bottom: 20px;
-    font-size: 1rem;
-    color: #f4f4f4;
-}
-
-.footer-text {
-    color: #fff;
-    font-size: 0.9rem;
-    text-align: center;
-    margin-top: 1rem;
+    align-items: center; /* Centra los resultados */
+    margin-top: 1rem; /* Espaciado superior */
 }
